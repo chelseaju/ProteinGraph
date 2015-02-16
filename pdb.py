@@ -8,9 +8,19 @@ from echo import *
 PDBL = PDBList()
 PDBP = PDBParser()
 
+"""
+	Convert 3 letter amino acid code to ascii integer
+"""
 
 def encode(aa):
 	return ord(aa[0])*10000 + ord(aa[1]) * 100 + ord(aa[0])
+
+
+"""
+	Convert ascii integer to 3 letter amino acid code
+"""
+def decode(ascii):
+	return chr(ascii / 10000) + chr((ascii % 10000) / 100) + chr(((ascii % 10000) % 100))
 
 
 """
