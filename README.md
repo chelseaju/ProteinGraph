@@ -17,6 +17,6 @@ Protein graphs are constructed based on the 3D structures. Each vertex denotes a
 * python 03_select_protein.py -e edge_info.txt -r pdb_pfam_mapping.txt -f PF01288 -d pfam_graphs
 
 ###Details
-01: count the number of protein for each family, and number of family for each protein
-02: plot the histogram from 01
-03: generate the positive and negative graphs for a given family
+* 01: count the number of protein for each family, and number of family for each protein
+* 02: plot the histogram from 01
+* 03: generate the positive and negative graphs for a given family
