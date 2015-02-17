@@ -81,8 +81,8 @@ def retrieve_negative(pfam_id, edge_info, dir, count):
 
 	count = count * (1.5)
 	negative_count = 0
-	while(negative_count != count):
-		index = random.randint(0, len(candidates))
+	while(negative_count < count):
+		index = random.randint(0, len(candidates)-1)
 		negative_protein = candidates[index]
 	
 		if(not negative_protein in selected and not negative_protein in POSITIVE):

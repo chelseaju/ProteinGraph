@@ -13,7 +13,7 @@ PDBP = PDBParser()
 """
 
 def encode(aa):
-	return ord(aa[0])*10000 + ord(aa[1]) * 100 + ord(aa[0])
+	return ord(aa[0])*10000 + ord(aa[1]) * 100 + ord(aa[2])
 
 
 """
@@ -91,8 +91,11 @@ if __name__ == "__main__":
 #	pdb_info = parse_pdb_by_id('1L2Y', 'A')
 #	pdb_info = parse_pdb_by_id('4BPP', 'A')
 #	pdb_dist = pairwise_distance(pdb_info, "test.txt")
-	pdb_info = parse_pdb_by_id('1EG0', 'A')
-	print pdb_info
+
+	ascii = encode('MET')
+	print ascii
+	print decode(ascii)
+
 
 #	aa_to_number("pfam_graphs/PF03645/positive/tmp.txt", "pfam_graphs/PF03645/positive/positive_graphs.txt", [2])
 
