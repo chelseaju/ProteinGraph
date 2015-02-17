@@ -11,10 +11,10 @@ Protein graphs are constructed based on the 3D structures. Each vertex denotes a
 2. edge information: define the edge label for different ranges of distance, ex edge_info.txt
 
 ###Execution:
-python 01_pfam_profile.py -i pdb_pfam_mapping.txt -o pfam_data_summary
-R --no-save --slave < 02_pfam_distribution.R --args pfam_data_summary/pfam_count.txt pfam_data_summary
-R --no-save --slave < 02_pdb_distribution.R --args pfam_data_summary/pdb_count.txt pfam_data_summary
-python 03_select_protein.py -e edge_info.txt -r pdb_pfam_mapping.txt -f PF01288 -d pfam_graphs
+* python 01_pfam_profile.py -i pdb_pfam_mapping.txt -o pfam_data_summary
+* R --no-save --slave < 02_pfam_distribution.R --args pfam_data_summary/pfam_count.txt pfam_data_summary
+* R --no-save --slave < 02_pdb_distribution.R --args pfam_data_summary/pdb_count.txt pfam_data_summary
+* python 03_select_protein.py -e edge_info.txt -r pdb_pfam_mapping.txt -f PF01288 -d pfam_graphs
 
 ###Details
 01: count the number of protein for each family, and number of family for each protein
