@@ -40,10 +40,38 @@ def build_pfam_reference(pfam_ref, pfam_id):
 	echo("Building Pfam Reference")
 
 
+def build_scop_reference(scop_ref, fam_id):
+	fh = open(scop_ref, 'r')
+	for line in fh:
+		if(line[0] != "#"):
+			data = line.split("\t")
+                        pdb_id = data[1]
+                        chain = data[2][0]
+
+                        annotation = dict(item.split("=") for item in data[5].split(","))
+                        scop = annotation["fa"]
+
+                        pdb_name = pdb_id + "_" + chain
+
+			if(fam_id == scop):
+				POSITIVE.append(pdb_name)
+			else:
+				if(NEGATIVE.has_key(pdb_name)):
+					NEGATIVE[pdb_name].append(scop)
+				else:
+					NEGATIVE[pdb_name] = [scop]
+	fh.close()
+	echo("Building Scop Reference")
+
+
+
 # positive graphs
 def retrieve_positive(pfam_id, edge_info, dir):
 	positive_count = 0
-	for pdb_chain in sorted(set(POSITIVE)):
+	positive_candidates = set(POSITIVE)
+	select_candidates = random.sample(positive_candidates, 11)
+
+	for pdb_chain in sorted(select_candidates):
 		(pdb, chain) = pdb_chain.split('_')
 		
 		# distance file name
@@ -58,7 +86,7 @@ def retrieve_positive(pfam_id, edge_info, dir):
 		if(pdb_info):
 			# comput distance
 			pw_dist = pairwise_distance(pdb_info, pdb_dst_file)
-			
+	
 			# convert structure to graph
 			title = pfam_id+ " " + pdb_chain
 			pdb_to_graph(pw_dist, pdb_graph_file, edge_info, positive_count, title)
@@ -79,7 +107,7 @@ def retrieve_negative(pfam_id, edge_info, dir, count):
 
 	random.seed()
 
-	count = count * (1.5)
+	count = count * 1.5
 	negative_count = 0
 	while(negative_count < count):
 		index = random.randint(0, len(candidates)-1)
@@ -123,49 +151,55 @@ def retrieve_negative(pfam_id, edge_info, dir, count):
 def main(parser):
 	options = parser.parse_args()
 	edge_ref = options.eref
-	pfam_ref = options.pref
-	pfam_id = options.pfam
-	dir = options.dir
-	
+	fam_ref = options.fref
+	fam_id = options.fam
+	ftype = options.ftype
+	dir = options.dir	
+
+
 	if(dir[-1] != "/"):
 		dir += "/"
 
 	# create directory for selected pfam
-	pfam_dir = dir + pfam_id + "/"
-	pfam_positive_dir = pfam_dir + "positive"
-	pfam_negative_dir = pfam_dir + "negative"
-	os.system("rm -rf %s" %(pfam_negative_dir))
-	os.system("rm -rf %s" %(pfam_positive_dir))
-	os.system("mkdir -p %s %s %s" %(pfam_dir, pfam_positive_dir, pfam_negative_dir))
+	fam_dir = dir + fam_id + "/"
+	fam_positive_dir = fam_dir + "positive"
+	fam_negative_dir = fam_dir + "negative"
+	os.system("rm -rf %s" %(fam_negative_dir))
+	os.system("rm -rf %s" %(fam_positive_dir))
+	os.system("mkdir -p %s %s %s" %(fam_dir, fam_positive_dir, fam_negative_dir))
 
 	# build references
 	edge_info = build_edge_guideline(edge_ref)
-	build_pfam_reference(pfam_ref, pfam_id)
 
+	if(ftype == "pfam"):
+		build_pfam_reference(fam_ref, fam_id)
+	elif(ftype == "scop"):
+		build_scop_reference(fam_ref, fam_id)
 
-	positive_count = retrieve_positive(pfam_id, edge_info, pfam_positive_dir)
-	negative_count = retrieve_negative(pfam_id, edge_info, pfam_negative_dir, positive_count)
+	positive_count = retrieve_positive(fam_id, edge_info, fam_positive_dir)
+	negative_count = retrieve_negative(fam_id, edge_info, fam_negative_dir, positive_count)
 
 
 	# merge negative and positive graph
-	os.system("echo %d > %s/tmp.txt" %(positive_count, pfam_positive_dir))
-	os.system("echo %d > %s/tmp.txt" %(negative_count, pfam_negative_dir))
-	os.system("cat %s/*_*.txt >> %s/tmp.txt" %(pfam_positive_dir, pfam_positive_dir))
-	os.system("cat %s/*_*.txt >> %s/tmp.txt" %(pfam_negative_dir, pfam_negative_dir))
+	os.system("echo %d > %s/tmp.txt" %(positive_count, fam_positive_dir))
+	os.system("echo %d > %s/tmp.txt" %(negative_count, fam_negative_dir))
+	os.system("cat %s/*_*.txt >> %s/tmp.txt" %(fam_positive_dir, fam_positive_dir))
+	os.system("cat %s/*_*.txt >> %s/tmp.txt" %(fam_negative_dir, fam_negative_dir))
 
-	aa_to_number( "%s/tmp.txt" %(pfam_positive_dir), "%s/positive_graphs.txt" %(pfam_positive_dir), [2])
-        aa_to_number( "%s/tmp.txt" %(pfam_negative_dir), "%s/negative_graphs.txt" %(pfam_negative_dir), [2])
+	aa_to_number( "%s/tmp.txt" %(fam_positive_dir), "%s/positive_graphs.txt" %(fam_positive_dir), [2])
+        aa_to_number( "%s/tmp.txt" %(fam_negative_dir), "%s/negative_graphs.txt" %(fam_negative_dir), [2])
 
-	echo("There are %d positive and %d negative graphs for %s" %(positive_count, negative_count, pfam_id))
-	echo("Writing positive graph to %s/positive_graphs.txt" %(pfam_positive_dir))
-	echo("Writing negative graph to %s/negative_graphs.txt" %(pfam_negative_dir))
+	echo("There are %d positive and %d negative graphs for %s" %(positive_count, negative_count, fam_id))
+	echo("Writing positive graph to %s/positive_graphs.txt" %(fam_positive_dir))
+	echo("Writing negative graph to %s/negative_graphs.txt" %(fam_negative_dir))
 
 	echo("Done")
 if __name__ == "__main__":
 
         parser = argparse.ArgumentParser(prog='03_select_protein.py')
         parser.add_argument("-e", "--edge_reference", dest = "eref", type=str, help="edge reference file", required = True)
-       	parser.add_argument("-r", "--pfam_reference", dest = "pref", type=str, help="pfam association file", required = True)
-	parser.add_argument("-f", "--pfam_id", dest = "pfam", type=str, help="pfam id", required = True)
+       	parser.add_argument("-r", "--family_reference", dest = "fref", type=str, help="pfam or scop association file", required = True)
+	parser.add_argument("-f", "--family_id", dest = "fam", type=str, help="family id", required = True)
+	parser.add_argument("-t", "--family_type", dest = "ftype", type=str, help="pfam or scop", required = True)
 	parser.add_argument("-d", "--directory", dest = "dir", type=str, help="directory for output", required = True)
 	main(parser)

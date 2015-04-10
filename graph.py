@@ -82,7 +82,7 @@ def pdb_file_to_graph(dist_file, graph_file, edge_labels):
 
 
 if __name__ == "__main__":
-	edge_ref = "edge_info.txt"
+	edge_ref = "edge_info_v2.txt"
 	pdb_dist = "test.txt"
 	graph_file = "graph.txt"
 

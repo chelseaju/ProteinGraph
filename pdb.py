@@ -57,7 +57,7 @@ def pairwise_distance(pdb_info, pdb_dst_file):
 	for i in xrange(len(pdb_info)):
 		for j in xrange(i+1, len(pdb_info)):
 			distance.append((pdb_info[i][0], pdb_info[j][0], pdb_info[i][1] - pdb_info[j][1]))
-			fh.write("%s %s %d\n" %(pdb_info[i][0], pdb_info[j][0], pdb_info[i][1] - pdb_info[j][1]))
+			fh.write("%s %s %f\n" %(pdb_info[i][0], pdb_info[j][0], pdb_info[i][1] - pdb_info[j][1]))
 	fh.close()
 
 	echo("Writing distance to %s" %(pdb_dst_file))
@@ -88,13 +88,13 @@ def aa_to_number(infile, outfile, columns):
 if __name__ == "__main__":
 
 #	pdb_info = parse_pdb_by_id('3CKZ', 'A')
-#	pdb_info = parse_pdb_by_id('1L2Y', 'A')
+	pdb_info = parse_pdb_by_id('1L2Y', 'A')
 #	pdb_info = parse_pdb_by_id('4BPP', 'A')
-#	pdb_dist = pairwise_distance(pdb_info, "test.txt")
+	pdb_dist = pairwise_distance(pdb_info, "test.txt")
 
-	ascii = encode('MET')
-	print ascii
-	print decode(ascii)
+#	ascii = encode('MET')
+#	print ascii
+#	print decode(ascii)
 
 
 #	aa_to_number("pfam_graphs/PF03645/positive/tmp.txt", "pfam_graphs/PF03645/positive/positive_graphs.txt", [2])
