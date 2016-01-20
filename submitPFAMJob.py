@@ -3,9 +3,9 @@ import subprocess
 from subprocess import Popen, PIPE
 
 
-INPUT = "selected_pfam3.txt"
-OUTDIR = "pfam_graphs"
-SCRIPTDIR = "pfam_scripts"
+INPUT = "/home/chelseaju/ProteinGraph/selected_pfam.txt"
+OUTDIR = "/home/chelseaju/ProteinGraph_Data/"
+SCRIPTDIR = "/home/chelseaju/ProteinGraph_Data/scripts"
 
 TEMPLATE_SERIAL = """
 #####################################
@@ -31,7 +31,7 @@ echo "------------------------------------------------------------------------"
 """
 
 # create directory for scripts and output
-os.system("mkdir -p %s %s" %(OUTDIR, SCRIPTDIR))
+#os.system("mkdir -p %s %s" %(OUTDIR, SCRIPTDIR))
 
 fh = open(INPUT, 'r')
 for line in fh:
@@ -44,11 +44,18 @@ for line in fh:
 
 	
 	script = "python 03_select_proteins.py " + \
-		" -e edge_info_v2.txt " + \
+		" -e edge_info_v1.txt " + \
 		" -r pdb_pfam_mapping.txt " + \
-		" -f " + pfam + \
+		" -f " + pfam + "_e1"\
 		" -t pfam " + \
 		" -d " + OUTDIR
+
+        script += "python 03_select_proteins.py " + \
+                " -e edge_info_v2.txt " + \
+                " -r pdb_pfam_mapping.txt " + \
+                " -f " + pfam + "_e2"\
+                " -t pfam " + \
+                " -d " + OUTDIR
 
 	scriptFILEHandler = open(scriptfile, 'wb');
 	scriptFILEHandler.write(TEMPLATE_SERIAL.format(script=script, name=pfam, logfile=logfile, errfile=errfile, slots=1))
