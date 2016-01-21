@@ -87,10 +87,12 @@ def aa_to_number(infile, outfile, columns):
 
 if __name__ == "__main__":
 
-#	pdb_info = parse_pdb_by_id('3CKZ', 'A')
-	pdb_info = parse_pdb_by_id('1L2Y', 'A')
+	pdb_info = parse_pdb_by_id('3CKZ', 'A')
+#	pdb_info = parse_pdb_by_id('1L2Y', 'A')
 #	pdb_info = parse_pdb_by_id('4BPP', 'A')
 	pdb_dist = pairwise_distance(pdb_info, "test.txt")
+
+	print pdb_info
 
 #	ascii = encode('MET')
 #	print ascii
@@ -99,4 +101,5 @@ if __name__ == "__main__":
 
 #	aa_to_number("pfam_graphs/PF03645/positive/tmp.txt", "pfam_graphs/PF03645/positive/positive_graphs.txt", [2])
 
+#
 

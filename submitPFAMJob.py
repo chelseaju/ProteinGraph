@@ -2,10 +2,9 @@ import os, time, random, sys, traceback
 import subprocess
 from subprocess import Popen, PIPE
 
-
-INPUT = "/home/chelseaju/ProteinGraph/selected_pfam.txt"
-OUTDIR = "/home/chelseaju/ProteinGraph_Data/"
-SCRIPTDIR = "/home/chelseaju/ProteinGraph_Data/scripts"
+INPUT = "/u/home/c/chelseaj/project/ProteinGraph/selected_pfam.txt"
+OUTDIR = "/u/scratch/c/chelseaj/ProteinGraph/"
+SCRIPTDIR = "/u/scratch/c/chelseaj/ProteinGraph/scripts"
 
 TEMPLATE_SERIAL = """
 #####################################
@@ -46,14 +45,14 @@ for line in fh:
 	script = "python 03_select_proteins.py " + \
 		" -e edge_info_v1.txt " + \
 		" -r pdb_pfam_mapping.txt " + \
-		" -f " + pfam + "_e1"\
+		" -f " + pfam + "_e1" +\
 		" -t pfam " + \
-		" -d " + OUTDIR
+		" -d " + OUTDIR + "\n"
 
         script += "python 03_select_proteins.py " + \
                 " -e edge_info_v2.txt " + \
                 " -r pdb_pfam_mapping.txt " + \
-                " -f " + pfam + "_e2"\
+                " -f " + pfam + "_e2" +\
                 " -t pfam " + \
                 " -d " + OUTDIR
 
