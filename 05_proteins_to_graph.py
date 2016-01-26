@@ -30,39 +30,6 @@ def build_pfam_reference(pfam_ref, pfam_id):
         echo("Building Pfam Reference")
 
 # positive graphs
-def retrieve_positive(pfam_id, edge_info, dir):
-        positive_count = 0
-        positive_candidates = set(POSITIVE)
-        select_candidates = random.sample(positive_candidates, 11)
-
-        for pdb_chain in sorted(select_candidates):
-                (pdb, chain) = pdb_chain.split('_')
-
-                # distance file name
-                pdb_dst_file = dir + pdb_chain + ".dist"
-
-                # graph file name
-                pdb_graph_file = dir + pdb_chain + ".txt"
-
-                # parse pdb data
-                pdb_info = parse_pdb_by_id(pdb, chain)
-
-                if(pdb_info):
-                        # comput distance
-                        pw_dist = pairwise_distance(pdb_info, pdb_dst_file)
-
-                        # convert structure to graph
-                        title = pfam_id+ " " + pdb_chain
-                        pdb_to_graph(pw_dist, pdb_graph_file, edge_info, positive_count, title)
-
-                        positive_count = positive_count + 1
-
-                if(positive_count % 100 == 0):
-                        time.sleep(3)
-
-        return positive_count
-
-# positive graphs
 def retrieve_graph(pfam_id, edge_info, dir):
         positive_count = 0
         positive_candidates = set(POSITIVE)
@@ -103,7 +70,7 @@ def main(parser):
         fam_id = options.fam
         ftype = options.ftype
         dir = options.dir
-
+	count = options.count
 
         if(dir[-1] != "/"):
                 dir += "/"
@@ -121,7 +88,16 @@ def main(parser):
                 build_scop_reference(fam_ref, fam_id)
 
 	num_protein = retrieve_graph(fam_id, edge_info, fam_dir)
-	echo("Retrieving %d proteins for %s" %(num_protein, fam_id)) 
+
+	if(count and int(count) != num_protein):
+		echo("Warning! %s contains %s proteins, but only has %d proteins" %(fam_id, count, num_protein))
+
+	if(num_protein < 10):
+		os.system("rm -rf %s " %(fam_dir))
+		echo("%s does not have more than 10 proteins" %(fam_id))
+
+	else:
+		echo("Retrieving %d proteins for %s" %(num_protein, fam_id)) 
 
 if __name__ == "__main__":
 
@@ -131,4 +107,5 @@ if __name__ == "__main__":
         parser.add_argument("-f", "--family_id", dest = "fam", type=str, help="family id", required = True)
         parser.add_argument("-t", "--family_type", dest = "ftype", type=str, help="pfam or scop", required = True)
         parser.add_argument("-d", "--directory", dest = "dir", type=str, help="directory for output", required = True)
+	parser.add_argument("-c", "--count", dest = "count", type=str, help="number of protein", required = False)
         main(parser)
