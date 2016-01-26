@@ -87,8 +87,8 @@ def aa_to_number(infile, outfile, columns):
 
 if __name__ == "__main__":
 
-	pdb_info = parse_pdb_by_id('3CKZ', 'A')
-#	pdb_info = parse_pdb_by_id('1L2Y', 'A')
+#	pdb_info = parse_pdb_by_id('1WDD', 'A')
+	pdb_info = parse_pdb_by_id('1L2Y', 'A')
 #	pdb_info = parse_pdb_by_id('4BPP', 'A')
 	pdb_dist = pairwise_distance(pdb_info, "test.txt")
 
